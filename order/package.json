@@ -10,6 +10,7 @@
     "mongoose": "^8.4.0"
   },
   "devDependencies": {
+    "@types/dotenv": "^6.1.1",
     "@types/node": "^20.11.17",
     "tsx": "^4.1.0"
   }
