@@ -1,7 +1,7 @@
 import { Hono } from 'hono';
 import Delivery from '../models/delivery';
 import { isValidObjectId } from 'mongoose';
-
+import {myEnv} from '../../conf'
 
 
 
@@ -12,7 +12,7 @@ const apiKeyMiddleware = async (c, next) => {
   const apiKey = c.req.header('Authorization');
   console.log('Received Authorization Header:', apiKey); // Log the received header
   
-  const expectedApiKey = `Bearer api_token`;
+  const expectedApiKey = `Bearer ${myEnv.API_KEY}`;
 
   if (apiKey !== expectedApiKey) {
     return c.json({

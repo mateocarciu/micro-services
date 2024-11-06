@@ -1,7 +1,7 @@
 import { connect } from "mongoose"
 import {myEnv} from '../conf'
 
-const CONNECTION_STRING = `mongodb+srv://cedricdsst:C9STiOiaJQYv8j3I@cluster0.7oiduv6.mongodb.net/micro-service-delivery?retryWrites=true&w=majority&appName=Cluster0`
+const CONNECTION_STRING = `mongodb+srv://${myEnv.MONGODB_USER}:${myEnv.MONGODB_PWD}@${myEnv.MONGODB_CLUSTER}/${myEnv.MONGODB_DATABASE}`
 
 // if(myEnv.MONGOOSE_DEBUG==='true') mongoose.set('debug', false);
 
