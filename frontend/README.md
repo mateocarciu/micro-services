@@ -1,3 +1,11 @@
+# To install before usage
+
+npm install axios         # Pour les appels API
+npm install react-router-dom  # Pour le routing
+npm install @mui/material @emotion/react @emotion/styled  # (optionnel) Pour l'UI
+npm install tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
