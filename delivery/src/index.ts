@@ -1,23 +1,23 @@
-import { serve } from '@hono/node-server'
-import { Hono } from 'hono'
-import {DbConnect} from './db'
+import { serve } from '@hono/node-server';
+import { Hono } from 'hono';
+import { DbConnect } from './db';
+import deliveries from './routes/deliveries';
 
-import deliveries from './routes/deliveries'
+const app = new Hono();
+await DbConnect();
 
+const port = 3000;
+console.log(`Server is running on port ${port}`);
 
-const app = new Hono()
-await DbConnect()
+// Apply the /api base route for deliveries
+app.route('/api', deliveries);
 
-const port = 3000
-console.log(`Server is running on port ${port}`)
-
-app.route('/api', deliveries)
-
-app.use("*", async (c) => {
-  await c.json({ msg: '404 oups' });
+// 404 Handler - Apply this after all routes
+app.notFound((c) => {
+  return c.json({ msg: '404 oups' }, 404);
 });
 
 serve({
   fetch: app.fetch,
-  port
-})
+  port,
+});

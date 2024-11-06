@@ -2,9 +2,38 @@ import { Hono } from 'hono';
 import Delivery from '../models/delivery';
 import { isValidObjectId } from 'mongoose';
 
+
+
+
 const router = new Hono().basePath('/deliveries');
 
-// Get the list of orders ready to be delivered
+// Middleware to check the API key
+const apiKeyMiddleware = async (c, next) => {
+  const apiKey = c.req.header('Authorization');
+  console.log('Received Authorization Header:', apiKey); // Log the received header
+  
+  const expectedApiKey = `Bearer api_token`;
+
+  if (apiKey !== expectedApiKey) {
+    return c.json({
+      message: 'Unauthorized',
+      reason: `Received API key was: ${apiKey ? apiKey : 'None'}`,
+      expectedFormat: 'Bearer <API_KEY>'
+    }, 401);
+  }
+
+  await next();
+};
+
+// Apply the middleware to all routes
+router.use('*', apiKeyMiddleware);
+
+/**
+ * GET /deliveries/orders
+ * Query: Returns a list of orders ready to be delivered.
+ * - Required Header: Authorization: Bearer <API_KEY>
+ * - Example Request: GET /deliveries/orders
+ */
 router.get('/orders', async (c) => {
   try {
     const orders = await Delivery.find({ status: 'pending' }).populate('order deliveryPerson');
@@ -14,7 +43,13 @@ router.get('/orders', async (c) => {
   }
 });
 
-// Assign an order to a delivery person
+/**
+ * POST /deliveries/assign
+ * Query: Assigns an order to a delivery person.
+ * - Required Header: Authorization: Bearer <API_KEY>
+ * - Example JSON Payload: { "order_id": "<orderId>", "deliveryPerson_id": "<deliveryPersonId>" }
+ * - Example Request: POST /deliveries/assign
+ */
 router.post('/assign', async (c) => {
   const { order_id, deliveryPerson_id } = await c.req.json();
 
@@ -36,7 +71,14 @@ router.post('/assign', async (c) => {
   }
 });
 
-// Update the delivery status
+/**
+ * PUT /deliveries/orders/:id/status
+ * Query: Updates the delivery status for a specific order.
+ * - Required Header: Authorization: Bearer <API_KEY>
+ * - Example URL Param: /deliveries/orders/<deliveryId>/status
+ * - Example JSON Payload: { "status": "in progress" | "delivered" }
+ * - Example Request: PUT /deliveries/orders/<deliveryId>/status
+ */
 router.put('/orders/:id/status', async (c) => {
   const deliveryId = c.req.param('id');
   const { status } = await c.req.json();
@@ -66,7 +108,13 @@ router.put('/orders/:id/status', async (c) => {
   }
 });
 
-// Get details of an order in delivery
+/**
+ * GET /deliveries/orders/:id
+ * Query: Retrieves details of a specific order in delivery.
+ * - Required Header: Authorization: Bearer <API_KEY>
+ * - Example URL Param: /deliveries/orders/<deliveryId>
+ * - Example Request: GET /deliveries/orders/<deliveryId>
+ */
 router.get('/orders/:id', async (c) => {
   const deliveryId = c.req.param('id');
 
