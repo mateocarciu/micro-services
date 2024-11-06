@@ -1,35 +1,20 @@
 import { Router } from 'express';
-import { AuthService } from '../services/authService';
-import { authMiddleware } from '../middleware/authMiddleware';
-import { apiKeyMiddleware } from '../middleware/apiKeyMiddleware';
+import { check } from 'express-validator';
+import { AuthController } from '../controllers/authController';
+import { validateApiKey } from '../middlewares/apiKeyMiddleware';
+import { UserRole } from '../types/userTypes';
 
 const router = Router();
-const authService = new AuthService();
 
-// Applique le middleware API Key pour toutes les routes
-router.use(apiKeyMiddleware);
+// Appliquer le middleware de validation de la clé API à toutes les routes
+router.use(validateApiKey);
 
-router.post('/register', async (req, res) => {
-  try {
-    const token = await authService.register(req.body);
-    res.json({ token });
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
+router.post('/register', [
+  check('email', 'Email invalide').isEmail(),
+  check('password', 'Le mot de passe doit faire au moins 6 caractères').isLength({ min: 6 }),
+  check('role', 'Rôle invalide').isIn(Object.values(UserRole))
+], AuthController.register);
 
-router.post('/login', async (req, res) => {
-  try {
-    const token = await authService.login(req.body.username, req.body.password);
-    res.json({ token });
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-});
-
-// Exemple de route protégée
-router.get('/protected', authMiddleware(['chef', 'livreur']), (req, res) => {
-  res.json({ message: `Bienvenue, ${req.user.role}` });
-});
+router.post('/login', AuthController.login);
 
 export default router;
