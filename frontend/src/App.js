@@ -1,11 +1,8 @@
-// src/App.js
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import Layout from './components/layout/Layout';
 import PrivateRoute from './components/PrivateRoute';
 import ErrorBoundary from './components/common/ErrorBoundary';
-
-// Pages
 import Home from './pages/Home';
 import Login from './pages/Login';
 import NotFound from './pages/NotFound';

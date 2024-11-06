@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { userService } from '../../services/api.config';
+import { userService } from '../services/api.config';
 import LoadingSpinner from '../components/common/LoadingSpinner';
 
 const Home = () => {
