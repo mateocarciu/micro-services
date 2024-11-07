@@ -9,9 +9,10 @@ await DbConnect();
 const port = 3000;
 console.log(`Server is running on port ${port}`);
 
-app.route('/api', orders);
+// Mount orders router at /api/orders
+app.route('/api/orders', orders);
 
-// Fix: Return the response in the 404 handler
+// 404 handler
 app.notFound((c) => {
   return c.json({ msg: '404 oups' }, 404);
 });
@@ -20,4 +21,3 @@ serve({
   fetch: app.fetch,
   port
 });
-

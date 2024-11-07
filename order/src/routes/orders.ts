@@ -1,11 +1,10 @@
 import { Hono } from 'hono';
 import Order from '../models/order';
 import { isValidObjectId } from 'mongoose';
-import { myEnv } from '../../conf'
+import { myEnv } from '../../conf';
 
 const router = new Hono();
 
-// Hardcoded API key for middleware validation
 // Middleware to check the API key
 const apiKeyMiddleware = async (c, next) => {
   const apiKey = c.req.header('Authorization');
@@ -19,7 +18,6 @@ const apiKeyMiddleware = async (c, next) => {
     }, 401);
   }
 
-  // Call next() if the API key is correct
   return await next();
 };
 
@@ -27,14 +25,7 @@ const apiKeyMiddleware = async (c, next) => {
 router.use('*', apiKeyMiddleware);
 
 /**
- * POST /orders/
- * Creates a new order.
- * - Required Header: Authorization: Bearer hardcoded_secure_api_key
- * - Required Body: JSON with `userId` (string) and `items` (array of objects with `itemId` and `itemName`)
- * - Example Request:
- *   POST /orders/
- *   Headers: { "Authorization": "Bearer hardcoded_secure_api_key" }
- *   Body: { "userId": "<userId>", "items": [{ "itemId": "<itemId>", "itemName": "Item Name" }] }
+ * POST / - Creates a new order.
  */
 router.post('/', async (c) => {
   try {
@@ -53,12 +44,7 @@ router.post('/', async (c) => {
 });
 
 /**
- * GET /orders/:id
- * Retrieves a single order by ID.
- * - Required Header: Authorization: Bearer hardcoded_secure_api_key
- * - Example Request:
- *   GET /orders/<orderId>
- *   Headers: { "Authorization": "Bearer hardcoded_secure_api_key" }
+ * GET /:id - Retrieves a single order by ID.
  */
 router.get('/:id', async (c) => {
   try {
@@ -79,12 +65,7 @@ router.get('/:id', async (c) => {
 });
 
 /**
- * GET /orders/
- * Retrieves all orders.
- * - Required Header: Authorization: Bearer hardcoded_secure_api_key
- * - Example Request:
- *   GET /orders/
- *   Headers: { "Authorization": "Bearer hardcoded_secure_api_key" }
+ * GET / - Retrieves all orders.
  */
 router.get('/', async (c) => {
   try {
@@ -96,14 +77,7 @@ router.get('/', async (c) => {
 });
 
 /**
- * PUT /orders/:id
- * Updates an order's status by ID.
- * - Required Header: Authorization: Bearer hardcoded_secure_api_key
- * - Required Body: JSON with `status` (one of: "pending", "accepted", "closed", "canceled")
- * - Example Request:
- *   PUT /orders/<orderId>
- *   Headers: { "Authorization": "Bearer hardcoded_secure_api_key" }
- *   Body: { "status": "accepted" }
+ * PUT /:id - Updates an order's status by ID.
  */
 router.put('/:id', async (c) => {
   try {
@@ -129,6 +103,61 @@ router.put('/:id', async (c) => {
     }
 
     return c.json(updatedOrder);
+  } catch (err: any) {
+    return c.json({ message: err.message }, 500);
+  }
+});
+
+/**
+ * GET /customer/:customerId - Retrieves all orders for a specific customerId.
+ */
+router.get('/customer/:customerId', async (c) => {
+  try {
+    const { customerId } = c.req.param();
+
+    if (!customerId) {
+      return c.json({ message: 'Invalid customerId' }, 400);
+    }
+
+    const orders = await Order.find({ customerId }).populate('items.itemId');
+    return c.json(orders);
+  } catch (err: any) {
+    return c.json({ message: err.message }, 500);
+  }
+});
+
+/**
+ * GET /livreur/:livreurId - Retrieves all orders for a specific livreurId.
+ */
+router.get('/livreur/:livreurId', async (c) => {
+  try {
+    const { livreurId } = c.req.param();
+
+    if (!livreurId) {
+      return c.json({ message: 'Invalid livreurId' }, 400);
+    }
+
+    const orders = await Order.find({ livreurId }).populate('items.itemId');
+    return c.json(orders);
+  } catch (err: any) {
+    return c.json({ message: err.message }, 500);
+  }
+});
+
+/**
+ * GET /status/:status - Retrieves all orders with a specific status.
+ */
+router.get('/status/:status', async (c) => {
+  try {
+    const { status } = c.req.param();
+
+    const validStatuses = ['pending', 'accepted', 'pending-delivery', 'delivering', 'closed'];
+    if (!validStatuses.includes(status)) {
+      return c.json({ message: 'Invalid status' }, 400);
+    }
+
+    const orders = await Order.find({ status }).populate('items.itemId');
+    return c.json(orders);
   } catch (err: any) {
     return c.json({ message: err.message }, 500);
   }
