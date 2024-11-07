@@ -1,26 +1,27 @@
 import { Schema, model, Document, Types } from 'mongoose';
 
 interface IOrderItem {
-  itemId: Types.ObjectId;
-  itemName: string;
+  itemId: Types.ObjectId; 
+  itemName: string;       
 }
 
 interface IOrder extends Document {
-  userId: Types.ObjectId;
+  userId: string; // External user identifier
   status: string;
   items: IOrderItem[];
 }
 
 const OrderItemSchema: Schema = new Schema({
-  itemId: { type: Schema.Types.ObjectId, ref: 'Item', required: true },
+  itemId: { type: Schema.Types.ObjectId, required: true }, // No ref to another collection
   itemName: { type: String, required: true },
 });
 
 const OrderSchema: Schema = new Schema({
-  userId: { type: Schema.Types.ObjectId, ref: 'User', required: true },
+  customerId: { type: String, required: true },
+  livreurId: { type: String, required: false },
   status: { 
     type: String, 
-    enum: ['pending', 'accepted', 'closed', 'canceled'], 
+    enum: ['pending', 'accepted', 'pending-delivery', 'delivering', 'closed'], 
     required: true, 
     default: 'pending' 
   },
