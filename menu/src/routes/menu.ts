@@ -67,31 +67,43 @@ router.delete('/items/:id', async (c) => {
 });
 
 // Route to update a menu item by ID
-router.put('/items/:id', async (c) => {
+// Route to partially update a menu item by ID
+router.patch('/items/:id', async (c) => {
   try {
     const itemId = c.req.param('id');
-    const { menuItemName, availabilityStatus } = await c.req.json();
+    const updates = await c.req.json(); // Get the fields to update from the request body
 
     if (!isValidObjectId(itemId)) {
       return c.json({ message: 'Invalid item ID' }, 400);
     }
 
-    const updatedData = {
-      ...(menuItemName && { menuItemName }),
-      ...(availabilityStatus !== undefined && { availabilityStatus }),
-    };
+    const validFields = ['menuItemName', 'availabilityStatus']; // Define fields allowed for updates
+    const updateData = {};
 
-    const updatedItem = await MenuItem.findByIdAndUpdate(itemId, updatedData, { new: true });
+    // Only add valid fields to updateData
+    for (const key in updates) {
+      if (validFields.includes(key)) {
+        updateData[key] = updates[key];
+      }
+    }
+
+    // If no valid fields are provided, return a 400 error
+    if (Object.keys(updateData).length === 0) {
+      return c.json({ message: 'No valid fields to update' }, 400);
+    }
+
+    const updatedItem = await MenuItem.findByIdAndUpdate(itemId, updateData, { new: true });
 
     if (!updatedItem) {
       return c.json({ message: 'Menu item not found' }, 404);
     }
 
     return c.json(updatedItem);
-  } catch (err: any) {
+  } catch (err) {
     return c.json({ message: err.message }, 500);
   }
 });
+
 
 // Retrieve all menu items
 router.get('/items', async (c) => {

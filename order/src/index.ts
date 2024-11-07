@@ -6,7 +6,7 @@ import orders from './routes/orders';
 const app = new Hono();
 await DbConnect();
 
-const port = 3000;
+const port = 3002;
 console.log(`Server is running on port ${port}`);
 
 // Mount orders router at /api/orders

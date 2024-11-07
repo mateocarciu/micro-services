@@ -1,5 +1,5 @@
 import { connect } from "mongoose"
-import {myEnv} from '../conf'
+import {myEnv} from '../../menu/conf'
 
 const CONNECTION_STRING = `mongodb+srv://${myEnv.MONGODB_USER}:${myEnv.MONGODB_PWD}@${myEnv.MONGODB_CLUSTER}/${myEnv.MONGODB_DATABASE}`
 

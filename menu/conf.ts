@@ -6,6 +6,7 @@ interface Env {
     MONGODB_PWD: string; 
     MONGODB_CLUSTER: string; 
     MONGODB_DATABASE?: string; 
+    API_KEY?: string;
 }
 
 
@@ -14,4 +15,5 @@ export const myEnv: Env = {
     MONGODB_PWD : process.env.MONGODB_PWD  || '',
     MONGODB_CLUSTER : process.env.MONGODB_CLUSTER  || '',
     MONGODB_DATABASE : process.env.MONGODB_DATABASE  || '',
+    API_KEY : process.env.API_KEY  || ''
 }

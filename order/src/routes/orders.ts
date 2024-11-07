@@ -51,12 +51,12 @@ router.get('/:id', async (c) => {
     const orderId = c.req.param('id');
 
     if (!isValidObjectId(orderId)) {
-      return c.json({ message: 'Invalid order ID' }, 400);
+      return c.json({ message: 'Invalid order ID' }, 200);
     }
 
     const order = await Order.findById(orderId).populate('userId items.itemId');
     if (!order) {
-      return c.json({ message: 'Order not found' }, 404);
+      return c.json({ message: 'Order not found' }, 200);
     }
     return c.json(order);
   } catch (err: any) {
@@ -77,36 +77,44 @@ router.get('/', async (c) => {
 });
 
 /**
- * PUT /:id - Updates an order's status by ID.
+ * PATCH /:id - Partially updates an order by ID.
  */
-router.put('/:id', async (c) => {
+router.patch('/:id', async (c) => {
   try {
     const orderId = c.req.param('id');
-    const { status } = await c.req.json();
+    const updates = await c.req.json(); // Get the fields to update from the request body
 
     if (!isValidObjectId(orderId)) {
       return c.json({ message: 'Invalid order ID' }, 400);
     }
 
-    if (!['pending', 'accepted', 'closed', 'canceled'].includes(status)) {
-      return c.json({ message: 'Invalid status' }, 400);
+    const validFields = ['status', 'userId', 'items']; // Define the fields allowed for updates
+    const updateData = {};
+
+    // Only add valid fields to updateData
+    for (const key in updates) {
+      if (validFields.includes(key)) {
+        updateData[key] = updates[key];
+      }
     }
 
-    const updatedOrder = await Order.findByIdAndUpdate(
-      orderId,
-      { status },
-      { new: true }
-    );
+    // If no valid fields are provided, return a 400 error
+    if (Object.keys(updateData).length === 0) {
+      return c.json({ message: 'No valid fields to update' }, 400);
+    }
+
+    const updatedOrder = await Order.findByIdAndUpdate(orderId, updateData, { new: true });
 
     if (!updatedOrder) {
       return c.json({ message: 'Order not found' }, 404);
     }
 
     return c.json(updatedOrder);
-  } catch (err: any) {
+  } catch (err) {
     return c.json({ message: err.message }, 500);
   }
 });
+
 
 /**
  * GET /customer/:customerId - Retrieves all orders for a specific customerId.
