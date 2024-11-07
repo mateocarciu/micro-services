@@ -3,12 +3,17 @@ import { useAuth } from '../../context/AuthContext';
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
+  const token = localStorage.getItem('token'); // Récupérer le token du localStorage
+  const firstName = localStorage.getItem('firstname');
+  const lastName = localStorage.getItem('lastname');
+  const { user, logout } = useAuth(); // Récupérer l'utilisateur et la fonction logout depuis le contexte
 
   const handleLogout = () => {
     logout(); // Utilisation de la fonction logout du contexte
     navigate('/login');
   };
+
+  console.log(firstName);
 
   return (
     <nav className="bg-gray-800 p-4">
@@ -18,21 +23,19 @@ const Navbar = () => {
           <Link to="/order" className="text-white">Order</Link>
           <Link to="/kitchen" className="text-white">Kitchen</Link>
           <Link to="/delivery" className="text-white">Delivery</Link>
-          {localStorage.getItem('token') && (
-            <>
-              <Link to="/dashboard" className="text-white">Dashboard</Link>
-              <Link to="/profile" className="text-white">Profile</Link>
-            </>
-          )}
         </div>
-        <div>
-          {localStorage.getItem('token') ? (
-            <button 
-              onClick={handleLogout}
-              className="bg-red-500 text-white px-4 py-2 rounded"
-            >
-              Logout
-            </button>
+        <div className="text-white">
+          {/* Si l'utilisateur est connecté, afficher son prénom et nom */}
+          {token ? (
+            <div className="flex items-center space-x-4">
+              <span>Bienvenue, {firstName} {lastName}</span>
+              <button 
+                onClick={handleLogout}
+                className="bg-red-500 text-white px-4 py-2 rounded"
+              >
+                Logout
+              </button>
+            </div>
           ) : (
             <Link 
               to="/login"
