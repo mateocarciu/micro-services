@@ -10,6 +10,7 @@ import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
 import CustomerOrderPage from './pages/Order';
 import KitchenMenuPage from './pages/Kitchen';
+import DeliveryDashboard from './pages/Delivery';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
               <Route index element={<Home />} />
               <Route path="order" element={<CustomerOrderPage />} />
               <Route path="kitchen" element={<KitchenMenuPage />} />
+              <Route path="delivery" element={<DeliveryDashboard />} />
               <Route path="login" element={<Login />} />
               
               {/* Protected routes */}
