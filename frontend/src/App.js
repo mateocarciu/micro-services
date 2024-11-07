@@ -8,6 +8,7 @@ import Login from './pages/Login';
 import NotFound from './pages/NotFound';
 import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
+import CustomerOrderPage from './pages/Order';
 
 function App() {
   return (
@@ -18,6 +19,7 @@ function App() {
             <Route path="/" element={<Layout />}>
               {/* Public routes */}
               <Route index element={<Home />} />
+              <Route path="order" element={<CustomerOrderPage />} />
               <Route path="login" element={<Login />} />
               
               {/* Protected routes */}

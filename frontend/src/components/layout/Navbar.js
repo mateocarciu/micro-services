@@ -16,6 +16,7 @@ const Navbar = () => {
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center space-x-4">
           <Link to="/" className="text-white font-bold">Home</Link>
+          <Link to="/order" className="text-white">Order</Link>
           {isAuthenticated && (
             <>
               <Link to="/dashboard" className="text-white">Dashboard</Link>
