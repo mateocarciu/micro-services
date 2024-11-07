@@ -9,6 +9,7 @@ import NotFound from './pages/NotFound';
 import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
 import CustomerOrderPage from './pages/Order';
+import KitchenMenuPage from './pages/Kitchen';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
               {/* Public routes */}
               <Route index element={<Home />} />
               <Route path="order" element={<CustomerOrderPage />} />
+              <Route path="kitchen" element={<KitchenMenuPage />} />
               <Route path="login" element={<Login />} />
               
               {/* Protected routes */}

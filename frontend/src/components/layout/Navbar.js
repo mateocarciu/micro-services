@@ -17,6 +17,7 @@ const Navbar = () => {
         <div className="flex items-center space-x-4">
           <Link to="/" className="text-white font-bold">Home</Link>
           <Link to="/order" className="text-white">Order</Link>
+          <Link to="/kitchen" className="text-white">Kitchen</Link>
           {isAuthenticated && (
             <>
               <Link to="/dashboard" className="text-white">Dashboard</Link>
