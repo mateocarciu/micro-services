@@ -1,5 +1,6 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { Fragment } from 'react';
 
 const Navbar = () => {
   const navigate = useNavigate();
@@ -21,8 +22,14 @@ const Navbar = () => {
         <div className="flex items-center space-x-4">
           <Link to="/" className="text-white font-bold">Home</Link>
           <Link to="/order" className="text-white">Order</Link>
-          <Link to="/kitchen" className="text-white">Kitchen</Link>
-          <Link to="/delivery" className="text-white">Delivery</Link>
+          {token ? (
+            <Fragment>
+              <Link to="/kitchen" className="text-white">Kitchen</Link>
+              <Link to="/delivery" className="text-white">Delivery</Link>
+            </Fragment>
+            ) : (
+             <div></div>
+          )}
         </div>
         <div className="text-white">
           {/* Si l'utilisateur est connecté, afficher son prénom et nom */}

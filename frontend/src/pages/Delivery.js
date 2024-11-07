@@ -1,30 +1,39 @@
 import { useState, useEffect } from 'react';
+import axios from 'axios';
 
 const DeliveryDashboard = () => {
-  const [deliveries, setDeliveries] = useState([
-    {
-      id: 1,
-      status: 'pending',
-      address: '123 Rue des Lilas, 75001 Paris',
-      customerName: 'John Doe',
-      customerPhone: '0612345678'
-    },
-    {
-      id: 2,
-      status: 'picked',
-      address: '45 Avenue des Champs-Élysées, 75008 Paris',
-      customerName: 'Jane Smith',
-      customerPhone: '0687654321'
-    },
-    {
-      id: 3,
-      status: 'delivered',
-      address: '78 Boulevard Saint-Germain, 75006 Paris',
-      customerName: 'Robert Martin',
-      customerPhone: '0698765432'
-    }
-  ]);
+  const [deliveries, setDeliveries] = useState([]);
+  const [error, setError] = useState(null);
 
+  // Fonction pour récupérer les commandes depuis l'API
+  const fetchOrders = async () => {
+    const token = localStorage.getItem('token'); // Récupérer le token pour authentification
+
+    if (!token) {
+      console.log('Token manquant');
+      setError('Token manquant');
+      return;
+    }
+
+    try {
+      const response = await axios.get('http://localhost:3000/api/order', {
+        headers: {
+          'token': token // Ajouter le token dans l'entête
+        }
+      });
+      setDeliveries(response.data); // Mettre à jour l'état avec les commandes récupérées
+    } catch (err) {
+      console.error('Erreur lors de la récupération des commandes:', err);
+      setError('Erreur lors de la récupération des commandes');
+    }
+  };
+
+  // Utiliser useEffect pour charger les commandes au premier rendu du composant
+  useEffect(() => {
+    fetchOrders();
+  }, []);
+
+  // Fonction pour mettre à jour le statut de la livraison
   const updateDeliveryStatus = (deliveryId, newStatus) => {
     const updatedDeliveries = deliveries.map(delivery => {
       if (delivery.id === deliveryId) {
@@ -38,6 +47,10 @@ const DeliveryDashboard = () => {
   return (
     <div className="container mx-auto p-4">
       <h1 className="text-2xl font-bold mb-6">Tableau de bord - Livraisons</h1>
+
+      {/* Affichage d'une erreur s'il y en a une */}
+      {error && <div className="text-red-500">{error}</div>}
+
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
         {deliveries.map((delivery) => (
           <div key={delivery.id} className="border rounded-lg p-4 shadow">
@@ -55,6 +68,7 @@ const DeliveryDashboard = () => {
                 {delivery.status.charAt(0).toUpperCase() + delivery.status.slice(1)}
               </span>
             </div>
+
             <div className="mb-4">
               <p className="font-medium">Adresse de livraison:</p>
               <p>{delivery.address}</p>
@@ -64,6 +78,21 @@ const DeliveryDashboard = () => {
               <p>{delivery.customerName}</p>
               <p>{delivery.customerPhone}</p>
             </div>
+
+            {/* Affichage des articles de la commande */}
+            <div className="mb-4">
+              <p className="font-medium">Articles de la commande:</p>
+              {delivery.items && delivery.items.length > 0 ? (
+                <ul>
+                  {delivery.items.map((item, index) => (
+                    <li key={index}>{item.itemName}</li> // Affichage du nom de l'article
+                  ))}
+                </ul>
+              ) : (
+                <p>Aucun article dans cette commande.</p>
+              )}
+            </div>
+
             <div className="mt-4 space-x-2">
               {delivery.status === 'pending' && (
                 <button
