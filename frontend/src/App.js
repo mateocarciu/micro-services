@@ -6,7 +6,7 @@ import ErrorBoundary from './components/common/ErrorBoundary';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import NotFound from './pages/NotFound';
-import Dashboard from './pages/Dashboard';
+import HomePage from './pages/Dashboard';
 import Profile from './pages/Profile';
 import CustomerOrderPage from './pages/Order';
 import KitchenMenuPage from './pages/Kitchen';
@@ -20,7 +20,7 @@ function App() {
           <Routes>
             <Route path="/" element={<Layout />}>
               {/* Public routes */}
-              <Route index element={<Home />} />
+              <Route index element={<HomePage />} />
               <Route path="order" element={<CustomerOrderPage />} />
               <Route path="kitchen" element={<KitchenMenuPage />} />
               <Route path="delivery" element={<DeliveryDashboard />} />
@@ -28,7 +28,7 @@ function App() {
               
               {/* Protected routes */}
               <Route element={<PrivateRoute />}>
-                <Route path="dashboard" element={<Dashboard />} />
+                <Route path="dashboard" element={<HomePage />} />
                 <Route path="profile" element={<Profile />} />
               </Route>
               
