@@ -10,6 +10,13 @@ mongoose.connect(config.database.url)
   .then(() => {
     console.log('Connected to MongoDB');
     
+    console.clear(); // Nettoie la console
+    console.log(`Starting API Gateway on port ${port}`);
+    console.log('Environment variables loaded:', {
+      USER_SERVICE_URL: process.env.USER_SERVICE_URL,
+      USER_SERVICE_API_KEY: process.env.USER_SERVICE_API_KEY ? 'Set' : 'Not set'
+    });
+
     // Démarrage du serveur une fois connecté à MongoDB
     serve({
       fetch: apiGateway.fetch,
@@ -22,3 +29,6 @@ mongoose.connect(config.database.url)
     console.error('MongoDB connection error:', error);
     process.exit(1);
   });
+
+
+
