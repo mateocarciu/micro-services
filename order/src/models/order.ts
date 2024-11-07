@@ -12,12 +12,12 @@ interface IOrder extends Document {
 }
 
 const OrderItemSchema: Schema = new Schema({
-  itemId: { type: Schema.Types.ObjectId, required: true }, // No ref to another collection
+  itemId: { type: Schema.Types.ObjectId, required: false }, // No ref to another collection
   itemName: { type: String, required: true },
 });
 
 const OrderSchema: Schema = new Schema({
-  customerId: { type: String, required: true },
+  userId: { type: String, required: true },
   livreurId: { type: String, required: false },
   status: { 
     type: String, 

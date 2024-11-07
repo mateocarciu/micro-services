@@ -1,13 +1,11 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 
 const CustomerOrderPage = () => {
-  const navigate = useNavigate();
-
   const [menu, setMenu] = useState([]); // Liste des articles du menu
   const [cart, setCart] = useState([]);
   const [specialInstructions, setSpecialInstructions] = useState('');
   const [error, setError] = useState(null);
+  const [successMessage, setSuccessMessage] = useState(''); // Message de confirmation
 
   // Fonction pour récupérer le menu
   const fetchMenu = async () => {
@@ -58,16 +56,53 @@ const CustomerOrderPage = () => {
     setCart(updatedCart);
   };
 
-  // Passer la commande
-  const placeOrder = () => {
+  // Fonction pour créer une nouvelle commande
+  const createOrder = async () => {
+    const token = localStorage.getItem('token'); // Récupérer le token du localStorage
+
+    if (!token) {
+      console.log('Token manquant');
+      setError('Token manquant');
+      return;
+    }
+
+    const userId = localStorage.getItem('userId'); // Récupérer l'ID de l'utilisateur depuis le localStorage
+
     const order = {
-      items: cart,
-      specialInstructions: specialInstructions
+      userId: userId,
+      items: cart.map(item => ({
+        itemId: item._id, // Utilise l'_id de l'élément
+        itemName: item.menuItemName
+      })),
+      specialInstructions: specialInstructions,
     };
 
-    // Envoyer la commande à l'API
-    console.log('Commande envoyée :', order);
-    navigate('/order-confirmation');
+    try {
+      const response = await fetch('http://localhost:3000/api/order', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'token': token // Ajouter le token dans les headers pour authentification
+        },
+        body: JSON.stringify(order),
+      });
+
+      if (!response.ok) {
+        throw new Error('Erreur lors de la création de la commande');
+      }
+
+      const data = await response.json();
+      console.log('Commande créée avec succès:', data);
+      setSuccessMessage('Votre commande a été validée avec succès !'); // Affichage du message de succès
+    } catch (err) {
+      console.error('Erreur lors de la création de la commande:', err);
+      setError('Erreur lors de la création de la commande');
+    }
+  };
+
+  // Passer la commande
+  const placeOrder = () => {
+    createOrder();
   };
 
   return (
@@ -153,6 +188,9 @@ const CustomerOrderPage = () => {
           <p>Votre panier est vide.</p>
         )}
       </div>
+
+      {/* Affichage du message de succès */}
+      {successMessage && <div className="text-green-500">{successMessage}</div>}
     </div>
   );
 };
