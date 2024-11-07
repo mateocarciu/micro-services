@@ -21,7 +21,7 @@ const Navbar = () => {
       <div className="container mx-auto flex justify-between items-center">
         <div className="flex items-center space-x-4">
           <Link to="/" className="text-white font-bold">Home</Link>
-          <Link to="/order" className="text-white">Order</Link>
+          <Link to="/order" className="text-white">Menu</Link>
           {token ? (
             <Fragment>
               <Link to="/kitchen" className="text-white">Kitchen</Link>

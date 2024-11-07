@@ -11,12 +11,6 @@ const CustomerOrderPage = () => {
   const fetchMenu = async () => {
     const token = localStorage.getItem('token'); // Récupérer le token du localStorage
 
-    if (!token) {
-      console.log('Token manquant');
-      setError('Token manquant');
-      return;
-    }
-
     try {
       const response = await fetch('http://localhost:3000/api/menu', {
         method: 'GET',
