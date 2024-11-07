@@ -1,4 +1,4 @@
-# To install before usage
+# Previous commands
 
 npm install axios         # Pour les appels API
 npm install react-router-dom  # Pour le routing
