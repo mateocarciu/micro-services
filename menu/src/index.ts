@@ -6,10 +6,10 @@ import menu from './routes/menu';
 const app = new Hono();
 await DbConnect();
 
-const port = 3000;
+const port = 3001;
 console.log(`Server is running on port ${port}`);
 
-app.route('/api', menu);
+app.route('/api/menu', menu);
 
 // Fix: Return the response in the 404 handler
 app.notFound((c) => {
