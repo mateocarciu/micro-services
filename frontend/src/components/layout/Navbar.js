@@ -1,13 +1,12 @@
 import { Link, useNavigate } from 'react-router-dom';
-import { useState } from 'react';
+import { useAuth } from '../../context/AuthContext';
 
 const Navbar = () => {
   const navigate = useNavigate();
-  const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
+  const { user, logout } = useAuth();
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    setIsAuthenticated(false);
+    logout(); // Utilisation de la fonction logout du contexte
     navigate('/login');
   };
 
@@ -19,7 +18,7 @@ const Navbar = () => {
           <Link to="/order" className="text-white">Order</Link>
           <Link to="/kitchen" className="text-white">Kitchen</Link>
           <Link to="/delivery" className="text-white">Delivery</Link>
-          {isAuthenticated && (
+          {localStorage.getItem('token') && (
             <>
               <Link to="/dashboard" className="text-white">Dashboard</Link>
               <Link to="/profile" className="text-white">Profile</Link>
@@ -27,7 +26,7 @@ const Navbar = () => {
           )}
         </div>
         <div>
-          {isAuthenticated ? (
+          {localStorage.getItem('token') ? (
             <button 
               onClick={handleLogout}
               className="bg-red-500 text-white px-4 py-2 rounded"

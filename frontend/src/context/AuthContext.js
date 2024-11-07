@@ -5,40 +5,37 @@ const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const initAuth = async () => {
-      const token = localStorage.getItem('token');
-      if (token) {
-        try {
-          // Vérifier le token avec le backend
-          const response = await authService.verifyToken();
-          setUser(response.data.user);
-        } catch (err) {
-          localStorage.removeItem('token');
-        }
-      }
-      setLoading(false);
-    };
-
-    initAuth();
-  }, []);
 
   const login = async (credentials) => {
     const response = await authService.login(credentials);
-    localStorage.setItem('token', response.data.token);
-    setUser(response.data.user);
+    localStorage.setItem('token', response.data.data.auth_token); // Stocke le token
+    localStorage.setItem('userId', response.data.data.userId); 
+    localStorage.setItem('email', response.data.data.email); 
+    localStorage.setItem('firstname', response.data.data.firstname); 
+    localStorage.setItem('lastname', response.data.data.lastname); 
+    localStorage.setItem('role', response.data.data.role); 
+    setUser({
+      userId: response.data.data.userId,
+      email: response.data.data.email,
+      firstname: response.data.data.firstname,
+      lastname: response.data.data.lastname,
+      role: response.data.data.role
+    }); // Stocke toutes les données utilisateur
   };
 
   const logout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('userId');
+    localStorage.removeItem('email');
+    localStorage.removeItem('firstname');
+    localStorage.removeItem('lastname');
+    localStorage.removeItem('role');
     setUser(null);
   };
 
   return (
-    <AuthContext.Provider value={{ user, loading, login, logout }}>
-      {!loading && children}
+    <AuthContext.Provider value={{ user, login, logout }}>
+      {children}
     </AuthContext.Provider>
   );
 };

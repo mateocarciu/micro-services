@@ -2,6 +2,7 @@
 import axios from 'axios';
 
 const API = axios.create({
+  baseURL: 'http://localhost:3000', // Ajout de l'URL de base pour l'API
   timeout: 10000,
   headers: {
     'Content-Type': 'application/json',
@@ -35,7 +36,7 @@ API.interceptors.response.use(
   }
 );
 
-// Example service for a microservice
+// Services pour l'authentification et les utilisateurs
 export const userService = {
   getUsers: () => API.get('/api/users'),
   getUserById: (id) => API.get(`/api/users/${id}`),

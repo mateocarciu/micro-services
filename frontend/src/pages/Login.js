@@ -1,9 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { authService } from '../services/api.config';
+import { useAuth } from '../context/AuthContext'; // Importer le contexte Auth
 
 const Login = () => {
   const navigate = useNavigate();
+  const { login } = useAuth(); // Récupérer la fonction login depuis le contexte
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -20,10 +21,11 @@ const Login = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await authService.login(formData);
-      localStorage.setItem('token', response.data.token);
-      navigate('/dashboard');
+      await login(formData); // Utiliser la fonction login du contexte Auth
+      console.log('Connexion réussie !'); // Confirmation dans la console
+      navigate('/dashboard'); // Redirige vers le tableau de bord après la connexion
     } catch (err) {
+      console.error(err.response?.data); // Affiche l'erreur complète dans la console
       setError(err.response?.data?.message || 'An error occurred');
     }
   };

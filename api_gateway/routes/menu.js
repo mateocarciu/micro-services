@@ -4,7 +4,7 @@ const auth = require('../middleware/auth');
 const menuController = require('../controllers/menu');
 
 // Get all menu items
-router.get('/', auth, menuController.getAllMenuItems);
+router.get('/', menuController.getAllMenuItems);
 
 // Get one menu item by ID
 router.get('/:id', auth, menuController.getOneMenuItem);
