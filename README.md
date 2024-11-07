@@ -1,1 +1,4 @@
-# micro-services
+# Installer les packages nécessaires
+```
+yarn install
+```
